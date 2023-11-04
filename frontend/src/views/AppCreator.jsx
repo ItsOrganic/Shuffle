@@ -5637,7 +5637,24 @@ const AppCreator = (defaultprops) => {
         hidden
         type="file"
         ref={(ref) => (upload = ref)}
-        onChange={editHeaderImage}
+        onChange={(e) => {
+          const file = e.target.files[0];
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+              canvas.width = 174;
+              canvas.height = 174;
+              ctx.drawImage(img, 0, 0, 174, 174);
+              const base64 = canvas.toDataURL("image/jpeg");
+              editHeaderImage(base64);
+            };
+          };
+        }}
       />
       <Paper style={boxStyle}>
 	  	<div style={{display: "flex", }}>
